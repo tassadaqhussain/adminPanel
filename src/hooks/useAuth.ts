@@ -1,4 +1,3 @@
-// src/hooks/useAuth.ts
 import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { login, logout } from '../features/auth/authSlice';

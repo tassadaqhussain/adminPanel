@@ -1,4 +1,3 @@
-// src/components/Login.tsx
 import React, { useState, useEffect } from 'react';
 import { useLogin } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
