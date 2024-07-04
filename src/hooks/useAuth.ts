@@ -4,6 +4,7 @@ import { login, logout } from '../features/auth/authSlice';
 import { loginUser, logoutUser } from '../services/api';
 import { AppDispatch } from '../app/store';
 import { User } from '../types/auth';
+import { useNavigate } from 'react-router-dom';
 
 export const useLogin = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -23,17 +24,26 @@ export const useLogin = () => {
         }
     );
 };
-
 export const useLogout = () => {
     const dispatch: AppDispatch = useDispatch();
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
-    return useMutation(logoutUser, {
-        onSuccess: () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            dispatch(logout());
-            queryClient.invalidateQueries('auth');
+    return useMutation(
+        async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                await logoutUser(token);
+            }
         },
-    });
+        {
+            onSuccess: () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                dispatch(logout());
+                queryClient.invalidateQueries('auth');
+                navigate('/login');
+            },
+        }
+    );
 };

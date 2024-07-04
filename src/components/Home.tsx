@@ -9,7 +9,7 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/dashboard');
+            navigate('admin/dashboard');
         } else {
             navigate('/login');
         }

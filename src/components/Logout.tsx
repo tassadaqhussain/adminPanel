@@ -1,19 +1,14 @@
-import React from 'react';
-import {useLogout} from '../hooks/useAuth';
+import React, { useEffect } from 'react';
+import { useLogout } from '../hooks/useAuth';
 
 const Logout: React.FC = () => {
     const logoutMutation = useLogout();
 
-    const handleLogout = async () => {
-        try {
-            await logoutMutation.mutateAsync();
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    useEffect(() => {
+        logoutMutation.mutate();
+    }, [logoutMutation]);
 
-    return (
-        <button onClick={handleLogout}>Logout</button>
-    );
-}
+    return <div>Logging out...</div>;
+};
+
 export default Logout;
