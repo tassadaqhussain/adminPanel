@@ -1,53 +1,146 @@
-import React, { useEffect, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { store } from "./app/store";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { login } from "./features/auth/authSlice";
-import { loadAuthState } from "./utils/auth";
+// import React from 'react';
+import {
+    createBrowserRouter,
+    RouterProvider,
+    Outlet,
+    ScrollRestoration,
+} from 'react-router-dom';
+import Home from './pages/Home';
+import Users from './pages/Users';
+import Products from './pages/Products';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Menu from './components/menu/Menu';
+import Error from './pages/Error';
+import Profile from './pages/Profile';
+import Orders from './pages/Orders';
+import Posts from './pages/Posts';
+import Notes from './pages/Notes';
+import Calendar from './pages/Calendar';
+import Charts from './pages/Charts';
+import Logs from './pages/Logs';
+import ToasterProvider from './components/ToasterProvider';
+import EditProfile from './pages/EditProfile';
+import User from './pages/User';
+import Product from './pages/Product';
+import Login from './pages/Login';
+import ProtectedRoute from './ProtectedRoute';
+import Roles from './pages/Roles'
 
-const Dashboard = React.lazy(() => import("./components/Dashboard"));
-const Home = React.lazy(() => import("./components/Home"));
-const Profile = React.lazy(() => import("./components/Profile"));
-const Settings = React.lazy(() => import("./components/Settings"));
-const Reports = React.lazy(() => import("./components/Reports"));
-const Tables = React.lazy(() => import("./components/Tables"));
-const Login = React.lazy(() => import("./components/Login"));
-const AdminLayout = React.lazy(() => import("./layouts/admin"));
+function App() {
+    const Layout = () => {
+        return (
+            <ProtectedRoute>
+                <div
+                    id="rootContainer"
+                    className="w-full p-0 m-0 overflow-visible min-h-screen flex flex-col justify-between"
+                >
+                    <ToasterProvider/>
+                    <ScrollRestoration/>
+                    <div>
+                        <Navbar/>
+                        <div className="w-full flex gap-0 pt-20 xl:pt-[96px] 2xl:pt-[112px] mb-auto">
+                            <div
+                                className="hidden xl:block xl:w-[250px] 2xl:w-[280px] 3xl:w-[350px] border-r-2 border-base-300 dark:border-slate-700 px-3 xl:px-4 xl:py-1">
+                                <Menu/>
+                            </div>
+                            <div className="w-full px-4 xl:px-4 2xl:px-5 xl:py-2 overflow-clip">
+                                <Outlet/>
+                            </div>
+                        </div>
+                    </div>
+                    <Footer/>
+                </div>
+            </ProtectedRoute>
+        );
+    };
 
-const queryClient = new QueryClient();
+    const router = createBrowserRouter([
+        {
+            path: '/',
+            element: <Layout/>,
+            children: [
+                {
+                    path: '/',
+                    element: <Home/>,
+                },
+                // Protected Routes
+                {
+                    path: '/profile',
+                    element: (
 
-const App: React.FC = () => {
-    const dispatch = useDispatch();
+                        <Profile/>
 
-    useEffect(() => {
-        const authState = loadAuthState();
-        if (authState.isAuthenticated && authState.user) {
-            dispatch(login(authState.user));
-        }
-    }, [dispatch]);
+                    ),
+                },
+                {
+                    path: '/profile/edit',
+                    element: (
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <Router>
-                <Suspense fallback={<div>Loading...</div>}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route
-                            path="/admin/*"
-                            element={
-                                <ProtectedRoute>
-                                    <AdminLayout />
-                                </ProtectedRoute>
-                            }
-                        />
-                    </Routes>
-                </Suspense>
-            </Router>
-        </QueryClientProvider>
-    );
-};
+                        <EditProfile/>
+
+                    ),
+                },
+                {
+                    path: '/users',
+                    element: (
+
+                        <Users/>
+
+                    ),
+                },
+                {
+                    path: '/users/:id',
+                    element: (
+
+                        <User/>
+
+                    ),
+                },
+
+                {
+                    path: '/roles',
+                    element: <Roles/>,
+                },
+                {
+                    path: '/products/:id',
+                    element: <Product/>,
+                },
+                {
+                    path: '/orders',
+                    element: <Orders/>,
+                },
+                {
+                    path: '/posts',
+                    element: <Posts/>,
+                },
+                {
+                    path: '/notes',
+                    element: <Notes/>,
+                },
+                {
+                    path: '/calendar',
+                    element: <Calendar/>,
+                },
+                {
+                    path: '/charts',
+                    element: <Charts/>,
+                },
+                {
+                    path: '/logs',
+                    element: <Logs/>,
+                },
+            ],
+            errorElement: <Error/>,
+        },
+        {
+            path: '/login',
+            element: <Login/>,
+        },
+    ]);
+
+
+    return <RouterProvider router={router}/>;
+}
 
 export default App;

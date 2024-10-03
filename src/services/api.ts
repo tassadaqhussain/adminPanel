@@ -1,10 +1,7 @@
 import axios from 'axios';
-let baseURL = 'http://localhost:8000/api/admin';
-if(process.env.REACT_APP_STAGE ==='production'){
-    baseURL = 'https://app.blueolivetech.com/api/admin';
-}
+
 const api = axios.create({
-    baseURL:baseURL,
+    baseURL:'http://localhost:8000/api/admin',
 });
 
 export const loginUser = async (email: string, password: string) => {
