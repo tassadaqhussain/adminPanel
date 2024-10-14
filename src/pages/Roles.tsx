@@ -1,26 +1,22 @@
-import React from 'react';
-import {fetchUsers} from '../api/ApiCollection';
-import {useQuery} from '@tanstack/react-query';
+import React, {useState} from 'react';
+import {fetchRoles} from '../api/ApiCollection';
+import {useQuery, keepPreviousData} from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import AddData from '../components/AddData';
-import DataTable from "../components/DataTable.tsx";
+import DataTable from '../components/DataTable';
 
 const Roles = () => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [page, setPage] = React.useState(0); // Current page state
-    const [pageSize, setPageSize] = React.useState(10); // Page size state
-    const [totalUsers, setTotalUsers] = React.useState(0); // Total number of users
-    const [editData, setEditData] = React.useState(null); // State to hold user data for editing
+
+    const [page, setPage] = useState(0); // Page state for server-side pagination
+    const [pageSize, setPageSize] = useState(10); // Page size state for server-side pagination
 
     // Fetch data using React Query
     const {isLoading, isError, isSuccess, data} = useQuery({
-        queryKey: ['allusers', page, pageSize], // Key includes pagination details
-        queryFn: () => fetchUsers(page, pageSize), // Fetch users for the specific page and size
-        keepPreviousData: true, // Keep old data while fetching new data
-        onSuccess: (result) => {
-            setTotalUsers(result.total); // Set the total number of users
-        },
+        queryKey: ['allRoles', page, pageSize], // Key includes pagination details
+        queryFn: () => fetchRoles(page, pageSize), // Fetch users for the specific page and size
+        placeholderData: keepPreviousData, // Keep old data while fetching new data
+
     });
+
 
     React.useEffect(() => {
         if (isLoading) {
@@ -35,88 +31,48 @@ const Roles = () => {
     }, [isError, isLoading, isSuccess]);
 
     // Calculate the total number of pages based on totalUsers and pageSize
-    const totalPages = Math.ceil(totalUsers / pageSize);
+    // const totalPages = Math.ceil(totalUsers / pageSize);
 
-    const columns: GridColDef[] = [
+    const columns = [
         {field: 'id', headerName: 'ID', minWidth: 90},
-        {field: 'name', headerName: 'Name'},
-        {field: 'email', headerName: 'Email', minWidth: 150},
-        {field: 'roles', headerName: 'Roles', minWidth: 90},
-
+        {field: 'name', headerName: 'Name'}
 
     ];
-    const editUser = (user: any) => {
-        setEditData(user); // Set the user data for editing
-        setIsOpen(true); // Open the modal
-    };
+
     return (
         <div className="w-full p-0 m-0">
             <div className="w-full flex flex-col items-stretch gap-3">
                 <div className="w-full flex justify-between mb-5">
                     <div className="flex gap-1 justify-start flex-col items-start">
                         <h2 className="font-bold text-2xl xl:text-4xl mt-0 pt-0 text-base-content dark:text-neutral-200">
-                            Users
+                            Roles
                         </h2>
-                        <p>{data?.total} Users Found</p>
+                        <p>{data?.total} Roles</p>
                     </div>
                     <button
-                        onClick={() => setIsOpen(true)}
+
                         className={`btn ${isLoading ? 'btn-disabled' : 'btn-primary'}`}
                     >
-                        Add New User +
+                        Add New Role+
                     </button>
                 </div>
 
-                {isLoading ? (
-                    <DataTable
-                        slug="orders"
-                        columns={columns}
-                        rows={[]}
-                        includeActionColumn={true}
-                    />
-                ) : isError ? (
-                    <>
-                        <DataTable
-                            slug="orders"
-                            columns={columns}
-                            rows={[]}
-                            includeActionColumn={true}
-                        />
-                        <div className="w-full flex justify-center">
-                            Error while getting the data!
-                        </div>
-                    </>
-                ) : isSuccess ? (
-                    <DataTable
-                        slug="orders"
-                        columns={columns}
-                        rows={data.users}
-                        includeActionColumn={true}
-                        customFunction={editUser}
-                    />
-                ) : (
-                    <>
-                        <DataTable
-                            slug="orders"
-                            columns={columns}
-                            rows={[]}
-                            includeActionColumn={true}
-                        />
-                        <div className="w-full flex justify-center">
-                            Error while getting the data!
-                        </div>
-                    </>
-                )}
+                {/* Use DataTable with server-side pagination */}
+                <DataTable
+                    slug="Role"
+                    columns={columns}
+                    rows={data?.roles || []} // Pass fetched rows
+                    includeActionColumn={true}
+                    customFunction={() => {}}
+                    page={page} // Current page
+                    setPage={setPage} // Setter function for page
+                    pageSize={pageSize} // Current page size
+                    setPageSize={setPageSize} // Setter function for page size
+                    rowCount={data?.total || 0} // Total rows count
+                    loading={isLoading} // Loading state
+                />
 
 
-                {isOpen && (
-                    <AddData
-                        slug={'user'}
-                        isOpen={isOpen}
-                        setIsOpen={setIsOpen}
-                        editData={editData} // Pass editData to modal component
-                    />
-                )}
             </div>
         </div>
     );

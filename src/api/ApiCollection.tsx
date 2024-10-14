@@ -119,7 +119,7 @@ export const fetchTotalProfit = async () => {
 export const fetchUsers = async (page: number = 0, pageSize: number = 10) => {
     try {
         const response = await api.post('/users-with-roles', {
-            page: page + 1, // Ensure page is at least 1
+            page: page, // Ensure page is at least 1
             pageSize: pageSize, // Ensure pageSize has a default value
         });
         console.log('axios post:', response.data.data);
@@ -221,9 +221,19 @@ export const fetchLogs = async () => {
 };
 
 
-export const fetchRoles = async () => {
+export const fetchRoles = async (page: number = 0, pageSize: number = 10) => {
     try {
-        const response = await api.get('/roles'); // Assuming the roles endpoint is /roles
+        const response = await api.post('/roles', {
+            page: page + 1, // Ensure page is at least 1
+            pageSize: pageSize, // Ensure pageSize has a default value
+        });
+
+
+        // Assuming the API returns both the user data and the total count of users
+        return {
+            roles: response.data.data || [], // Fallback to an empty array if undefined
+            total: response.data.total || 0,  // Fallback to 0 if total is undefined
+        };
         return response.data;
     } catch (error) {
         throw new Error('Failed to fetch roles');

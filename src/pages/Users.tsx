@@ -1,26 +1,23 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {fetchUsers} from '../api/ApiCollection';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery,keepPreviousData} from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import AddData from '../components/AddData';
-import DataTable from "../components/DataTable.tsx";
+import DataTable from '../components/DataTable';
 
 const Users = () => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [page, setPage] = React.useState(0); // Current page state
-    const [pageSize, setPageSize] = React.useState(10); // Page size state
-    const [totalUsers, setTotalUsers] = React.useState(0); // Total number of users
-    const [editData, setEditData] = React.useState(null); // State to hold user data for editing
-
+    const [isOpen, setIsOpen] = useState(false); // Modal state
+    const [page, setPage] = useState(0); // Page state for server-side pagination
+    const [pageSize, setPageSize] = useState(3); // Page size state for server-side pagination
+    const [editData, setEditData] = useState(null);
     // Fetch data using React Query
     const {isLoading, isError, isSuccess, data} = useQuery({
         queryKey: ['allusers', page, pageSize], // Key includes pagination details
         queryFn: () => fetchUsers(page, pageSize), // Fetch users for the specific page and size
-        keepPreviousData: true, // Keep old data while fetching new data
-        onSuccess: (result) => {
-            setTotalUsers(result.total); // Set the total number of users
-        },
+        placeholderData: keepPreviousData, // Keep old data while fetching new data
+
     });
+
 
     React.useEffect(() => {
         if (isLoading) {
@@ -35,9 +32,9 @@ const Users = () => {
     }, [isError, isLoading, isSuccess]);
 
     // Calculate the total number of pages based on totalUsers and pageSize
-    const totalPages = Math.ceil(totalUsers / pageSize);
+    // const totalPages = Math.ceil(totalUsers / pageSize);
 
-    const columns: GridColDef[] = [
+    const columns = [
         {field: 'id', headerName: 'ID', minWidth: 90},
         {field: 'name', headerName: 'Name'},
         {field: 'email', headerName: 'Email', minWidth: 150},
@@ -67,48 +64,22 @@ const Users = () => {
                     </button>
                 </div>
 
-                {isLoading ? (
-                    <DataTable
-                        slug="orders"
-                        columns={columns}
-                        rows={[]}
-                        includeActionColumn={true}
-                    />
-                ) : isError ? (
-                    <>
-                        <DataTable
-                            slug="orders"
-                            columns={columns}
-                            rows={[]}
-                            includeActionColumn={true}
-                        />
-                        <div className="w-full flex justify-center">
-                            Error while getting the data!
-                        </div>
-                    </>
-                ) : isSuccess ? (
-                    <DataTable
-                        slug="orders"
-                        columns={columns}
-                        rows={data.users}
-                        includeActionColumn={true}
-                        customFunction={editUser}
-                    />
-                ) : (
-                    <>
-                        <DataTable
-                            slug="orders"
-                            columns={columns}
-                            rows={[]}
-                            includeActionColumn={true}
-                        />
-                        <div className="w-full flex justify-center">
-                            Error while getting the data!
-                        </div>
-                    </>
-                )}
+                {/* Use DataTable with server-side pagination */}
+                <DataTable
+                    slug="users"
+                    columns={columns}
+                    rows={data?.users || []} // Pass fetched rows
+                    includeActionColumn={true}
+                    customFunction={editUser}
+                    page={page} // Current page
+                    setPage={setPage} // Setter function for page
+                    pageSize={pageSize} // Current page size
+                    setPageSize={setPageSize} // Setter function for page size
+                    rowCount={data?.total || 0} // Total rows count
+                    loading={isLoading} // Loading state
+                />
 
-
+                {/* Add or Edit User Modal */}
                 {isOpen && (
                     <AddData
                         slug={'user'}

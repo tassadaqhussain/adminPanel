@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
-import {
-    DataGrid,
-    GridColDef,
-    GridToolbar,
-} from '@mui/x-data-grid';
+import React from 'react';
+import { DataGrid, GridColDef, GridToolbar, GridPaginationModel } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
-import {
-    HiOutlinePencilSquare,
-    HiOutlineEye,
-    HiOutlineTrash,
-} from 'react-icons/hi2';
+import { HiOutlinePencilSquare, HiOutlineEye, HiOutlineTrash } from 'react-icons/hi2';
 import toast from 'react-hot-toast';
 
 interface DataTableProps {
@@ -17,6 +9,13 @@ interface DataTableProps {
     rows: object[];
     slug: string;
     includeActionColumn: boolean;
+    customFunction?: (user: any) => void; // Optional custom function prop
+    page: number; // Current page
+    setPage: (page: number) => void; // Setter for page state
+    pageSize: number; // Current page size
+    setPageSize: (size: number) => void; // Setter for page size state
+    rowCount: number; // Total row count for server-side pagination
+    loading: boolean; // Loading state
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -24,13 +23,15 @@ const DataTable: React.FC<DataTableProps> = ({
                                                  rows,
                                                  slug,
                                                  includeActionColumn,
-                customFunction
+                                                 customFunction,
+                                                 page,
+                                                 setPage,
+                                                 pageSize,
+                                                 setPageSize,
+                                                 rowCount,
+                                                 loading,
                                              }) => {
     const navigate = useNavigate();
-
-    // Pagination state
-    const [page, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
 
     // Action column definition
     const actionColumn: GridColDef = {
@@ -38,42 +39,28 @@ const DataTable: React.FC<DataTableProps> = ({
         headerName: 'Action',
         minWidth: 200,
         flex: 1,
-        renderCell: (params) => {
-            return (
-                <div className="flex items-center">
-                    <button
-                        onClick={() => {
-                            navigate(`/${slug}/${params.row.id}`);
-                        }}
-                        className="btn btn-square btn-ghost"
-                    >
-                        <HiOutlineEye />
-                    </button>
-                    <button
-                        onClick={() => {
-                            customFunction(params.row)
-                        }}
-                        className="btn btn-square btn-ghost"
-                    >
-                        <HiOutlinePencilSquare />
-                    </button>
-                    <button
-                        onClick={() => {
-                            toast('Jangan dihapus!', { icon: '😠' });
-                        }}
-                        className="btn btn-square btn-ghost"
-                    >
-                        <HiOutlineTrash />
-                    </button>
-                </div>
-            );
-        },
+        renderCell: (params) => (
+            <div className="flex items-center">
+                <button
+                    onClick={() => {
+                        navigate(`/${slug}/${params.row.id}`);
+                    }}
+                    className="btn btn-square btn-ghost"
+                >
+                    <HiOutlineEye />
+                </button>
+                <button onClick={() => customFunction?.(params.row)} className="btn btn-square btn-ghost">
+                    <HiOutlinePencilSquare />
+                </button>
+                <button onClick={() => toast('Jangan dihapus!', { icon: '😠' })} className="btn btn-square btn-ghost">
+                    <HiOutlineTrash />
+                </button>
+            </div>
+        ),
     };
 
     // Add the action column conditionally
-    const columnsWithAction = includeActionColumn
-        ? [...columns, actionColumn]
-        : [...columns];
+    const columnsWithAction = includeActionColumn ? [...columns, actionColumn] : [...columns];
 
     return (
         <div className="w-full bg-base-100 text-base-content">
@@ -83,21 +70,14 @@ const DataTable: React.FC<DataTableProps> = ({
                 columns={columnsWithAction}
                 getRowHeight={() => 'auto'}
                 pagination
-                paginationMode="client" // Enable client-side pagination
-                page={page} // Current page
-                pageSize={pageSize} // Page size
-                onPaginationModelChange={(newPagination) => {
-                    setPage(newPagination.page);
-                    setPageSize(newPagination.pageSize);
+                paginationMode="server" // Enable server-side pagination
+                rowCount={rowCount} // Total rows count from the server
+                paginationModel={{ page, pageSize }} // Use the controlled page and pageSize state
+                onPaginationModelChange={(newPagination: GridPaginationModel) => {
+                    setPage(newPagination.page); // Update page state
+                    setPageSize(newPagination.pageSize); // Update page size state
                 }}
-                rowCount={rows.length} // Total rows count
-                initialState={{
-                    pagination: {
-                        paginationModel: {
-                            pageSize: 10, // Initial page size
-                        },
-                    },
-                }}
+                loading={loading} // Show loading indicator
                 pageSizeOptions={[5, 10, 20]} // Page size options
                 slots={{ toolbar: GridToolbar }}
                 slotProps={{

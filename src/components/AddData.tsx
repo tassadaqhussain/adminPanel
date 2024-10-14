@@ -1,8 +1,8 @@
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, {FormEvent} from 'react';
 import toast from 'react-hot-toast';
-import { HiOutlineXMark } from 'react-icons/hi2';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchRoles, addUser } from '../api/ApiCollection';
+import {HiOutlineXMark} from 'react-icons/hi2';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {fetchRoles, addUser} from '../api/ApiCollection';
 
 interface AddDataProps {
     slug: string;
@@ -11,7 +11,7 @@ interface AddDataProps {
     editData?: any; // Optional prop for editing
 }
 
-const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) => {
+const AddData: React.FC<AddDataProps> = ({slug, isOpen, setIsOpen, editData}) => {
     const queryClient = useQueryClient(); // Initialize queryClient to invalidate queries
 
     // State to handle modal visibility
@@ -22,10 +22,9 @@ const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState(''); // New password state
     const [role, setRole] = React.useState(''); // New role state
-    const [formUserIsEmpty, setFormUserIsEmpty] = React.useState(true);
 
     // Fetch roles from API using React Query
-    const { data: roles, isLoading: rolesLoading, isError: rolesError } = useQuery({
+    const {data: roles, isLoading: rolesLoading, isError: rolesError} = useQuery({
         queryKey: ['roles'], // Changed queryKey to be an array
         queryFn: fetchRoles,
     });
@@ -60,7 +59,7 @@ const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) 
             return name.trim() !== '' && email.trim() !== '' && role !== '' && password.trim() !== '';
         }
 
-        return name.trim() !== '' && email.trim() !== '' && role!== '';
+        return name.trim() !== '' && email.trim() !== '' && role !== '';
     };
 
     // Handle form submission for both add and update operations
@@ -71,7 +70,7 @@ const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) 
             try {
                 if (editData) {
                     // If `editData` is present, update the user
-                   // await updateUser(editData.id, { name, email, role });
+                    // await updateUser(editData.id, { name, email, role });
                     toast.success('User updated successfully!');
                 } else {
                     // Call the API to add a new user
@@ -80,7 +79,7 @@ const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) 
                 }
 
                 // Invalidate the 'allusers' query to refetch the user list
-                queryClient.invalidateQueries(['allusers']); // Updated to use array format
+                queryClient.invalidateQueries({queryKey: ['allusers']}); // Updated to use array format
 
                 // Close the modal and reset form
                 setIsOpen(false);
@@ -111,7 +110,7 @@ const AddData: React.FC<AddDataProps> = ({ slug, isOpen, setIsOpen, editData }) 
                         }}
                         className="absolute top-5 right-3 btn btn-ghost btn-circle"
                     >
-                        <HiOutlineXMark className="text-xl font-bold" />
+                        <HiOutlineXMark className="text-xl font-bold"/>
                     </button>
                     <span className="text-2xl font-bold">
                         {editData ? `Edit ${slug}` : `Add new ${slug}`}
