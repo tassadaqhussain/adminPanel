@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// Define the API interface
+const baseURL = import.meta.env.MODE === 'production'
+    ? import.meta.env.VITE_PRODUCTION_API_BASE_URL
+    : import.meta.env.VITE_API_BASE_URL;
+
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api/admin',
+    baseURL: baseURL,
     headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`, // Example of using a token stored in localStorage

@@ -8,7 +8,7 @@ interface AddDataProps {
     slug: string;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    editData?: any; // Optional prop for editing
+    editData: any; // Optional prop for editing
 }
 
 const AddData: React.FC<AddDataProps> = ({slug, isOpen, setIsOpen, editData}) => {
@@ -26,7 +26,7 @@ const AddData: React.FC<AddDataProps> = ({slug, isOpen, setIsOpen, editData}) =>
     // Fetch roles from API using React Query
     const {data: roles, isLoading: rolesLoading, isError: rolesError} = useQuery({
         queryKey: ['roles'], // Changed queryKey to be an array
-        queryFn: fetchRoles,
+        queryFn: () => fetchRoles(),
     });
 
     // Effect to synchronize form fields with `editData`
@@ -35,7 +35,7 @@ const AddData: React.FC<AddDataProps> = ({slug, isOpen, setIsOpen, editData}) =>
             console.log(editData);
             setName(editData.name || '');
             setEmail(editData.email || '');
-            setRole(editData.role && editData.role.length > 0 ? editData.role[0] : '');
+            setRole(editData.role && editData.role.length > 0 ? editData?.role[0] : '');
             setPassword(''); // Do not pre-fill the password for security reasons
         }
     }, [editData]);
@@ -171,7 +171,7 @@ const AddData: React.FC<AddDataProps> = ({slug, isOpen, setIsOpen, editData}) =>
                                 <option key={role.id} value={role.id}>
                                     {role.name}
                                 </option>
-                            ))}
+                            )) && roles?.length > 0}
                         </select>
                     </label>
                     <button
