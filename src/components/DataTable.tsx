@@ -79,7 +79,14 @@ const DataTable: React.FC<DataTableProps> = ({
                 }}
                 loading={loading} // Show loading indicator
                 pageSizeOptions={[5, 10, 20]} // Page size options
-                slots={{ toolbar: GridToolbar }}
+                slots={{
+                    toolbar: GridToolbar,
+                    noRowsOverlay: () => (
+                        <div className="flex items-center justify-center h-full text-center text-gray-500">
+                            No data available
+                        </div>
+                    ),
+                }}
                 slotProps={{
                     toolbar: {
                         showQuickFilter: true,
@@ -91,6 +98,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 disableColumnFilter
                 disableDensitySelector
                 disableColumnSelector
+                style={{ minHeight: 400 }} // Ensures a consistent height
             />
         </div>
     );

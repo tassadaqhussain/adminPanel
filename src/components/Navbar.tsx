@@ -1,7 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {HiBars3CenterLeft} from 'react-icons/hi2';
-import {DiReact} from 'react-icons/di';
 import {HiSearch, HiOutlineBell} from 'react-icons/hi';
 import {RxEnterFullScreen, RxExitFullScreen} from 'react-icons/rx';
 import ChangeThemes from './ChangesThemes';
@@ -29,7 +28,7 @@ const Navbar = () => {
 
     React.useEffect(() => {
         if (isFullScreen) {
-            document.exitFullscreen();
+            //  document.exitFullscreen();
         } else {
             element?.requestFullscreen({navigationUI: 'auto'});
         }
@@ -69,11 +68,10 @@ const Navbar = () => {
                                 to={'/'}
                                 className="flex items-center gap-1 xl:gap-2 mt-1 mb-5"
                             >
-                                <DiReact
-                                    className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary animate-spin-slow"/>
+
                                 <span
                                     className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
-                  React Dashboard
+                  ApnaFarm Dashboard
                 </span>
                             </Link>
                             {menu.map((item, index) => (
@@ -90,10 +88,10 @@ const Navbar = () => {
 
                 {/* navbar logo */}
                 <Link to={'/'} className="flex items-center gap-1 xl:gap-2">
-                    <DiReact className="text-3xl sm:text-4xl xl:text-4xl 2xl:text-6xl text-primary animate-spin-slow"/>
+
                     <span
                         className="text-[16px] leading-[1.2] sm:text-lg xl:text-xl 2xl:text-2xl font-semibold text-base-content dark:text-neutral-200">
-            React Dashboard
+            ApnaFarm Dashboard
           </span>
                 </Link>
             </div>

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import  { Suspense,lazy } from 'react';
 import {
     createBrowserRouter,
     RouterProvider,
@@ -7,18 +7,25 @@ import {
 } from 'react-router-dom';
 
 // Dynamic imports for lazy loading components
-const Home = React.lazy(() => import('./pages/Home'));
-const Users = React.lazy(() => import('./pages/Users'));
-const Navbar = React.lazy(() => import('./components/Navbar'));
-const Footer = React.lazy(() => import('./components/Footer'));
-const Menu = React.lazy(() => import('./components/menu/Menu'));
-const Error = React.lazy(() => import('./pages/Error'));
-const Profile = React.lazy(() => import('./pages/Profile'));
-const EditProfile = React.lazy(() => import('./pages/EditProfile'));
-const User = React.lazy(() => import('./pages/User'));
-const Login = React.lazy(() => import('./pages/Login'));
-const Roles = React.lazy(() => import('./pages/Roles.tsx'));
-
+const Home = lazy(() => import('./pages/Home'));
+const Users = lazy(() => import('./pages/Users'));
+const Navbar = lazy(() => import('./components/Navbar'));
+const Footer = lazy(() => import('./components/Footer'));
+const Menu = lazy(() => import('./components/menu/Menu'));
+const Error = lazy(() => import('./pages/Error'));
+const Profile = lazy(() => import('./pages/Profile'));
+const EditProfile = lazy(() => import('./pages/EditProfile'));
+const User = lazy(() => import('./pages/User'));
+const Login = lazy(() => import('./pages/Login'));
+const Roles = lazy(() => import('./pages/Roles.tsx'));
+const ProjectConfiguration = lazy(() => import('./pages/ProjectConfigurations/ProjectConfigurations.tsx'));
+const FarmListing = lazy(() => import('./pages/FarmManagement/FarmListing.tsx'));
+const InvestmentProjects = lazy(() => import('./pages/InvestmentProjects/index.tsx'));
+const InvestorAccounts = lazy(() => import('./pages/InvestorAccounts/index.tsx'));
+const Transaction = lazy(() => import('./pages/Transactions/index.tsx'));
+const Compliance = lazy(() => import('./pages/ComplianceCheck/index.tsx'));
+const Notifications = lazy(() => import('./pages/Notifications/index.tsx'));
+const Helpdesk = lazy(() => import('./pages/HelpdeskSupport/index.tsx'));
 // Other components
 import ToasterProvider from './components/ToasterProvider';
 import ProtectedRoute from './ProtectedRoute';
@@ -115,6 +122,75 @@ function App() {
                         </Suspense>
                     ),
                 },
+                {
+                    path:'/project-configurations',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <ProjectConfiguration />
+                        </Suspense>
+                    ),
+                },
+                {
+                    path:'/manage-farms',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <FarmListing />
+                        </Suspense>
+                    ),
+                },
+                {
+                    path:'/investment-projects',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <InvestmentProjects />
+                        </Suspense>
+                    ),
+                },
+
+                {
+                    path:'/investor-accounts',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <InvestorAccounts />
+                        </Suspense>
+                    ),
+                },
+
+                {
+                    path:'/transactions',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <Transaction/>
+                        </Suspense>
+                    ),
+                },
+
+                {
+                    path:'/compliance-check',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <Compliance/>
+                        </Suspense>
+                    ),
+                },
+                {
+                    path:'/notifications-alerts',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <Notifications/>
+                        </Suspense>
+                    ),
+                },
+
+                {
+                    path:'/helpdesk-support',
+                    element: (
+                        <Suspense fallback={<div>Loading project configurations...</div>}>
+                            <Helpdesk/>
+                        </Suspense>
+                    ),
+                },
+
             ],
             errorElement: (
                 <Suspense fallback={<div>Loading error page...</div>}>
