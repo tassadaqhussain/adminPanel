@@ -3,8 +3,6 @@ import {
   HiOutlineHome,
   HiOutlineUsers,
   HiOutlineCube,
-  HiOutlineDocumentChartBar,
-
 } from 'react-icons/hi2';
 // import { IoSettingsOutline } from 'react-icons/io5';
 
@@ -75,6 +73,13 @@ export const menu = [
         url: '/compliance-check',
         icon: HiOutlineCube,
         label:'Compliance Check',
+      },
+
+      {
+        isLink: true,
+        url: '/wallet-management',
+        icon: HiOutlineCube,
+        label:'Wallet Management',
       },
       {
         isLink: true,

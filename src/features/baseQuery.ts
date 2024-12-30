@@ -2,7 +2,7 @@ import {fetchBaseQuery, createApi} from '@reduxjs/toolkit/query/react';
 import {getLocalStorageValue} from '../utils/localStorage';
 
 
-let baseURL = 'http://localhost:8000/api/admin';
+const baseURL = 'http://localhost:8000/api/admin';
 /*
 if (process.env.REACT_APP_STAGE === 'production') {
     baseURL = 'https://app.blueolivetech.com/api/admin';
@@ -12,6 +12,9 @@ if (process.env.REACT_APP_STAGE === 'production') {
 
 const tagTypes = [
     "projects",
+
+    'UserWallet',
+    'ConfiguredProject'
 
 ];
 
